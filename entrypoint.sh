@@ -25,6 +25,28 @@ URI="https://api.github.com"
 API_HEADER="Accept: application/vnd.github.v3+json"
 AUTH_HEADER="Authorization: token ${GITHUB_TOKEN}"
 
-jq --raw-output "$GITHUB_EVENT_PATH"
+number=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
 
-exit 0
+body=$(curl -sSL -H "${AUTH_HEADER}" -H "${API_HEADER}" "${URI}/repos/${GITHUB_REPOSITORY}/pulls/${number}")
+
+labels="$(echo "$body" | jq --raw-output '.labels[].name')"
+
+for label in $labels; do
+  case $label in
+    needs_revision)
+      echo "Needs revision!"
+      exit 1
+      ;;
+    needs_test_plan)
+      echo "Needs test plan!"
+      exit 1
+      ;;
+    needs_ci)
+      echo "Needs ci!"
+      exit 1
+      ;;
+    *)
+      echo "LGTM!"
+      ;;
+  esac
+done
