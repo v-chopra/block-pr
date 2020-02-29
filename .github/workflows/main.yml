@@ -1,0 +1,14 @@
+name: CI
+
+on:
+  pull_request:
+    types:
+      - labeled
+      - unlabeled
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: v-chopra/block-pr@master
+      env:
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
