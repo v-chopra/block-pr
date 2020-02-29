@@ -50,3 +50,5 @@ for label in $labels; do
       ;;
   esac
 done
+
+exit 0
